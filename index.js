@@ -1,69 +1,60 @@
-let defaultarrvalue = ["astra", "book", "paper", "bus", "deep", "nehal"];
-let inputArray = defaultarrvalue;
+const form = document.querySelector('#add-form');
+const playerList = document.querySelector('#player-list');
 
-// Add the Data into Array
-const addData = () => {
-  const inputData = document.getElementById("input-array").value;
-  inputArray.push(inputData);
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = inputArray.join("\n");
-};
+let players = [];
 
-// Covert to Upper-Case
-const convertToUpperCase = () => {
-  const inputArray = document.getElementById("input-array").value.split(",");
-  const upperArray = inputArray.map((item) => item.toUpperCase());
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = upperArray.join("\n");
-};
+function addPlayer(event) {
+  event.preventDefault();
 
-// Covert to Lower-Case
-const convertToLoweCase = () => {
-  const inputArray = document.getElementById("input-array").value.split(",");
-  const lowerArray = inputArray.map((item) => item.toLowerCase());
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = lowerArray.join("\n");
-};
+  const firstName = document.querySelector('#first-name').value;
+  const lastName = document.querySelector('#last-name').value;
+  const country = document.querySelector('#country').value;
+  const score = document.querySelector('#score').value;
 
-// Sort into Ascending Order
-const sortAscending = () => {
-  inputArray.sort();
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = inputArray.join("\n");
-};
+  if (!firstName || !lastName || !country || !score) {
+    alert('All fields are required!');
+    return;
+  }
 
-// Sort in Descending Order
-const sortDescending = () => {
-  inputArray.reverse();
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = inputArray.join("\n");
-};
+  const now = new Date();
+  const date = now.toLocaleDateString();
+  const time = now.toLocaleTimeString();
 
-// Return the items which have ‘B’ as the first alphabet.
-const filterArray = () => {
-  const filteredArray = inputArray.filter((item) => item.startsWith("B"));
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = filteredArray.join("\n");
-};
+  players.push({ firstName, lastName, country, score, date, time });
 
-//Return the index of the entered value from the array
-const findIndex = () => {
-  const searchValue = document.getElementById("input-array").value;
-  const index = inputArray.indexOf(searchValue);
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value =
-    index !== -1
-      ? `Index of '${searchValue}' is ${index}`
-      : `'${searchValue}' not found in the array`;
-};
+  renderPlayerList();
+}
 
-// Create the dummy array and merge it with the main array with the help of spread and reducer.
-const mergeArrays = () => {
-  const dummyArray = [1, 2, 3, 4, 5];
-  const mergedArray = [
-    ...inputArray,
-    ...dummyArray.reduce((acc, curr) => [...acc, curr.toString()], []),
-  ];
-  const outputTextArea = document.getElementById("output-array");
-  outputTextArea.value = mergedArray.join("\n");
-};
+function deletePlayer(index) {
+  players.splice(index, 1);
+  renderPlayerList();
+}
+
+function modifyScore(index, delta) {
+  players[index].score += delta;
+  renderPlayerList();
+}
+
+function renderPlayerList() {
+  playerList.innerHTML = '';
+
+  players.forEach((player, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${player.firstName}</td>
+      <td>${player.lastName}</td>
+      <td>${player.country}</td>
+      <td>${player.score}</td>
+      <td>${player.date}</td>
+      <td>${player.time}</td>
+      <td>
+        <button onclick="deletePlayer(${index})">Delete</button>
+        <button onclick="modifyScore(${index}, 5)">+5</button>
+        <button onclick="modifyScore(${index}, -5)">-5</button>
+      </td>
+    `;
+    playerList.appendChild(row);
+  });
+}
+
+// form.addEventListener('submit', addPlayer);
