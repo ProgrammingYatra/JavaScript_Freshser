@@ -1,60 +1,45 @@
-const form = document.querySelector('#add-form');
-const playerList = document.querySelector('#player-list');
-
-let players = [];
-
-function addPlayer(event) {
-  event.preventDefault();
-
-  const firstName = document.querySelector('#first-name').value;
-  const lastName = document.querySelector('#last-name').value;
-  const country = document.querySelector('#country').value;
-  const score = document.querySelector('#score').value;
-
+// JavaScript code
+function addUser() {
+  const firstName = document.getElementById('firstName').value;
+  const lastName = document.getElementById('lastName').value;
+  const country = document.getElementById('country').value;
+  const score = document.getElementById('score').value;
+  
+  // Check if all fields are filled
   if (!firstName || !lastName || !country || !score) {
-    alert('All fields are required!');
+    alert('Please fill all fields');
     return;
   }
-
-  const now = new Date();
-  const date = now.toLocaleDateString();
-  const time = now.toLocaleTimeString();
-
-  players.push({ firstName, lastName, country, score, date, time });
-
-  renderPlayerList();
+  
+  // Add user to the table
+  const table = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+  const row = table.insertRow();
+  row.insertCell().innerHTML = firstName;
+  row.insertCell().innerHTML = lastName;
+  row.insertCell().innerHTML = country;
+  row.insertCell().innerHTML = score;
+  row.insertCell().innerHTML = new Date().toLocaleString();
+  row.insertCell().innerHTML = '<button onclick="deleteUser(this)">Delete</button>';
+  row.insertCell().innerHTML = '<button onclick="addScore(this)">+5</button>';
+  row.insertCell().innerHTML = '<button onclick="subtractScore(this)">-5</button>';
 }
 
-function deletePlayer(index) {
-  players.splice(index, 1);
-  renderPlayerList();
+function deleteUser(button) {
+  const row = button.parentNode.parentNode;
+  row.parentNode.removeChild(row);
+}
+function addScore(button) {
+  const row = button.parentNode.parentNode;
+  const scoreElement = row.querySelector('.score');
+  let score = parseInt(scoreElement.textContent);
+  score += 5;
+  scoreElement.textContent = score;
 }
 
-function modifyScore(index, delta) {
-  players[index].score += delta;
-  renderPlayerList();
+function subtractScore(button) {
+  const row = button.parentNode.parentNode;
+  const scoreElement = row.querySelector('.score');
+  let score = parseInt(scoreElement.textContent);
+  score -= 5;
+  scoreElement.textContent = score;
 }
-
-function renderPlayerList() {
-  playerList.innerHTML = '';
-
-  players.forEach((player, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${player.firstName}</td>
-      <td>${player.lastName}</td>
-      <td>${player.country}</td>
-      <td>${player.score}</td>
-      <td>${player.date}</td>
-      <td>${player.time}</td>
-      <td>
-        <button onclick="deletePlayer(${index})">Delete</button>
-        <button onclick="modifyScore(${index}, 5)">+5</button>
-        <button onclick="modifyScore(${index}, -5)">-5</button>
-      </td>
-    `;
-    playerList.appendChild(row);
-  });
-}
-
-// form.addEventListener('submit', addPlayer);
